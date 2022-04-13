@@ -20,6 +20,7 @@ import Reflex
 import Reflex.Vty.Widget
 import Reflex.Vty.Widget.Box
 import Reflex.Vty.Widget.Text
+import Graphics.Vty.Attributes (defAttr)
 
 -- * Buttons
 
@@ -144,12 +145,12 @@ checkbox cfg v0 = do
     , not <$ space
     , const <$> _checkboxConfig_setValue cfg
     ]
-  let bold = V.withStyle mempty V.bold
-  depressed <- hold mempty $ leftmost
+  let bold = V.withStyle defAttr V.bold
+  depressed <- hold defAttr $ leftmost
     [ bold <$ md
-    , mempty <$ mu
+    , defAttr <$ mu
     ]
-  let focused = ffor (current f) $ \x -> if x then bold else mempty
+  let focused = ffor (current f) $ \x -> if x then bold else defAttr
   let attrs = mconcat <$> sequence [_checkboxConfig_attributes cfg, depressed, focused]
   richText (RichTextConfig attrs) $ join . current $ ffor v $ \checked ->
     if checked

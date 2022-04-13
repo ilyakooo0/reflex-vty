@@ -1,0 +1,17 @@
+resolver: lts-18.28
+
+packages:
+  - .
+
+extra-deps:
+  - reflex-0.8.2.0
+  - monoidal-containers-0.6.2.0@sha256:124941d70df5e2928b4c6db605a1d0464e68c2c6b02e426db24a40194d43821d,2219
+  - patch-0.0.5.2@sha256:0840a9f4f2ef620869975574834d9661157df59927bb3f2b0644c21210c75f47,2905
+  #   - ref-tf-0.4.0.2@sha256:69de3550250e0cd69f45d080359cb314a9487c915024349c75b78732bbee9332,1134
+  #   - reflex-0.8.2.0@sha256:2ea3db2ed15b83eed6b15f7c1aaceeda9e783b611ac530032f6aeaf0d33b8ef0,11974
+  #   - vty-5.28.2@sha256:8cffce1f4f92eec70b5c3763bb6437852fd3fa7546869496f7667a5abc3f07d7,20859
+  - ../vty
+  - git: https://github.com/ilyakooo0/MemoTrie-instances.git
+    commit: 59a52b2e24eebe61b2bc1bfd9007de5191e13a62
+
+allow-newer: true
