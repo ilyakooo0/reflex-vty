@@ -69,6 +69,25 @@ textButtonStatic cfg = textButton cfg . pure
 
 -- * Links
 
+combineMaybeDefault :: V.MaybeDefault x -> V.MaybeDefault x -> V.MaybeDefault x
+combineMaybeDefault V.Default V.Default = V.Default
+combineMaybeDefault V.Default V.KeepCurrent = V.Default
+combineMaybeDefault V.Default (V.SetTo v) = V.SetTo v
+combineMaybeDefault V.KeepCurrent V.Default = V.Default
+combineMaybeDefault V.KeepCurrent V.KeepCurrent = V.KeepCurrent
+combineMaybeDefault V.KeepCurrent (V.SetTo v) = V.SetTo v
+combineMaybeDefault (V.SetTo _v) V.Default = V.Default
+combineMaybeDefault (V.SetTo v) V.KeepCurrent = V.SetTo v
+combineMaybeDefault (V.SetTo _) (V.SetTo v) = V.SetTo v
+
+combineAttrs :: V.Attr -> V.Attr -> V.Attr
+combineAttrs attr0 attr1 =
+  V.Attr
+    (V.attrStyle attr0 `combineMaybeDefault` V.attrStyle attr1)
+    (V.attrForeColor attr0 `combineMaybeDefault` V.attrForeColor attr1)
+    (V.attrBackColor attr0 `combineMaybeDefault` V.attrBackColor attr1)
+    (V.attrURL attr0 `combineMaybeDefault` V.attrURL attr1)
+
 -- | A clickable link widget
 link
   :: (Reflex t, Monad m, HasDisplayRegion t m, HasImageWriter t m, HasInput t m, HasTheme t m)
@@ -151,7 +170,7 @@ checkbox cfg v0 = do
     , defAttr <$ mu
     ]
   let focused = ffor (current f) $ \x -> if x then bold else defAttr
-  let attrs = mconcat <$> sequence [_checkboxConfig_attributes cfg, depressed, focused]
+  let attrs = foldl combineAttrs V.defAttr <$> sequence [_checkboxConfig_attributes cfg, depressed, focused]
   richText (RichTextConfig attrs) $ join . current $ ffor v $ \checked ->
     if checked
       then _checkboxStyle_checked <$> _checkboxConfig_checkboxStyle cfg
